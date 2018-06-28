@@ -2,6 +2,7 @@
 
 import re
 import urllib.request
+from bs4 import BeautifulSoup
 # import tool
 url = "https://www.lagou.com/"
 
@@ -11,15 +12,14 @@ resp = urllib.request.urlopen(req)
 
 
 cont = resp.read().decode('utf-8')
-pattern = re.findall('<div class="category-list">.*?h2>(.*?)</h2>.*?<div class="menu_sub dn".*?<dt>*?<span>(.*?)</span>.*?</dt>.*?<dd>(.*?)</dd>', cont, re.S)
-print(pattern[0])
-#for item in pattern:
+pattern = re.findall('<div class="category-list">.*?h2>(.*?)</h2>.*?<div class="menu_sub dn">(.*?)</div>', cont, re.S)
+# print(pattern[0])
+for items in pattern:
 
-    #for i in item[2]:
-    #    list1 = []
-    #    url2 = re.findall('<a href="(.*?)".*?d.*?d.*?d.*?c.*?>(.*?)</a>', i, re.S)
-    #    reqq = urllib.request.Request(url)
-    #    respp = urllib.request.urlopen(req)
 
-    #    contt = respp.read().decode('utf-8')
-    #    patternA = re.findall('')
+    for item in items:
+
+        #url2 = re.findall('<a href="(.*?)".*?d.*?d.*?d.*?c.*?>(.*?)</a>', i, re.S)
+        #print(item)
+        patternA = re.findall('<dl.*?dt.*?<span>(.*?)</span>.*?<dd>(.*?)</dd>', item, re.S)
+        #print(patternA)
