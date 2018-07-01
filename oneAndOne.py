@@ -14,7 +14,7 @@ headers = {
 
 page = 1
 while page <= 30:
-    url = "https://www.lagou.com/zhaopin/Python/" + str(page) + "/?filterOption=3"
+    url = "https://www.lagou.com/zhaopin/Python/" + str(page) + "?filterOption=3"
     # print(url)
     req = urllib.request.Request(url, headers = headers)
     resp = urllib.request.urlopen(req)
@@ -24,6 +24,6 @@ while page <= 30:
     text = soup.select("div.s_position_list")
 
     result = re.findall('<li class="con_list_item default_list".*?data-company="(.*?)".*?<h3.*?>(.*?)</h3>.*?<em>(.*?)</em>.*?<span class="money">(.*?)</span>.*?-->(.*?)                              </div>.*?<div class="industry">(.*?)</div>', str(text), re.S)
-    #print(result)
+    print(result)
     page += 1
-# 不知道为什么从第十页开始，数据为空了
+# 不知道为什么从第十页开始，数据为空了,运行了几次，30页全为空了
