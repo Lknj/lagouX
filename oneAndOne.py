@@ -12,18 +12,34 @@ headers = {
     "X-Requested-With": "XMLHttpRequest"
 }
 
+XZ =[]
+Area = []
 page = 1
 while page <= 30:
-    url = "https://www.lagou.com/zhaopin/Python/" + str(page) + "?filterOption=3"
+    # print(str(page) + "页")
+    url = "https://www.lagou.com/zhaopin/Python/" + str(page) + "/?filterOption=3"
     # print(url)
     req = urllib.request.Request(url, headers = headers)
     resp = urllib.request.urlopen(req)
     cont = resp.read().decode("utf-8")
     # print(cont)
     soup = BeautifulSoup(cont, "lxml")
-    text = soup.select("div.s_position_list")
-
+    text = soup.select("div.s_position_list ")
+    # print(text)
     result = re.findall('<li class="con_list_item default_list".*?data-company="(.*?)".*?<h3.*?>(.*?)</h3>.*?<em>(.*?)</em>.*?<span class="money">(.*?)</span>.*?-->(.*?)                              </div>.*?<div class="industry">(.*?)</div>', str(text), re.S)
-    print(result)
+    # print(result)
     page += 1
-# 不知道为什么从第十页开始，数据为空了,运行了几次，30页全为空了
+
+    for xz in result:
+        XZ.append(xz[3])
+
+    for area in result:
+        Area.append(area[2])
+# print(XZ)
+# 去重，为了获取各个薪资水平
+xzSet = list(set(XZ))
+# print(len(xzSet))
+# 去重，区
+areaSet = list(set(Area))
+# print(areaSet)
+# 怎么作图、、、、
