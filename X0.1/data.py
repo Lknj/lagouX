@@ -1,8 +1,6 @@
 import re
 import urllib.request
 from bs4 import BeautifulSoup
-import numpy as np
-import matplotlib.pyplot as plt
 
 headers = {
     "Host": "www.lagou.com",
@@ -19,74 +17,50 @@ proxy = urllib.request.ProxyHandler({'http': "114.82.109.134:8118"})
 opener = urllib.request.build_opener(proxy, urllib.request.HTTPHandler)
 urllib.request.install_opener(opener)
 
-XZ = []
-Area = []
-page = 1
-while page <= 30:
-    print(str(page) + "页")
-    if page ==1 :
+def getUrl(p):
+    if p ==1 :
         url = "https://www.lagou.com/zhaopin/Python/"
     else:
-        url = "https://www.lagou.com/zhaopin/Python/" + str(page) + "/?filterOption=3"
-    # print(url)
+        url = "https://www.lagou.com/zhaopin/Python/" + str(p) + "/?filterOption=3"
+    return url
+def getData(url):
     req = urllib.request.Request(url, headers = headers)
     resp = urllib.request.urlopen(req)
     cont = resp.read().decode("utf-8")
-    # print(cont)
+
     soup = BeautifulSoup(cont, "lxml")
     text = soup.select("div.s_position_list ul")
-    # print(text)
     result = re.findall('<li class="con_list_item default_list".*?data-company="(.*?)".*?<h3.*?>(.*?)</h3>.*?<em>(.*?)</em>.*?<span class="money">(.*?)</span>.*?-->(.*?)                              </div>.*?<div class="industry">(.*?)</div>', str(text), re.S)
-    # print(result)
-    page += 1
+    return result
 
-    for xz in result:
-        XZ.append(xz[3])
+def allData():
+    all_data = []
+    page = 1
+    while page <= 30:
+        url = getUrl(page)
+        data = getData(url)
+        all_data.append(data)
+        page += 1
+    return all_data
 
-    for area in result:
-        Area.append(area[2])
-#print(len(XZ))
-# 去重，为了获取各个薪资水平
-# xzSet = list(set(XZ))
-# print(len(xzSet))
-# 去重，区
-# areaSet = list(set(Area))
-# print(areaSet)
-# 怎么作图、、、、
-# wt = sorted(xzSet)
+def xzData():
+    XZ = []
+    a = 0
+    b = 0
+    c = 0
+    d = 0
+    for xz in allData():
+        for x in xz:
+            XZ.append(x[3])
 
-# a代表20k以下的，b代表20k到40k的，c代表40k到80k的
-a = 0
-b = 0
-c = 0
-d = 0
-for x in XZ:
-    if int(x[-3:-1]) <= 20:
-        a += 1
-    elif 21 <= int(x[-3:-1]) <= 40:
-        b += 1
-    elif 41 <= int(x[-3:-1]) <= 60:
-        c += 1
-    elif 61 <= int(x[-3:-1]) <= 80:
-        d += 1
-
-print(a, b, c, d)
-
-
-
-# 条形图 数据
-value = [a, b, c, d]
-index = ["<=20k", "20K-40k", "40k-60k", "60k-80k"]
-# 饼状图 数据
-labels = "<=20k", "20K-40k", "40k-60k", "60k-80k"
-fracs = [a, b, c, d]
-
-plt.bar(left = index, height = value, color = "green", width = 0.5)
-plt.show()
-# 饼状图
-plt.axes(aspect = 1)
-
-explode = [0, 0.05, 0, 0]
-plt.pie(x = fracs, labels = labels, autopct = "%0f%%", explode = explode)
-
-plt.show()
+    for x in XZ:
+        if int(x[-3:-1]) <= 20:
+            a += 1
+        elif 21 <= int(x[-3:-1]) <= 40:
+            b += 1
+        elif 41 <= int(x[-3:-1]) <= 60:
+            c += 1
+        elif 61 <= int(x[-3:-1]) <= 80:
+            d += 1
+    A = [a, b, c, d]
+    return A
