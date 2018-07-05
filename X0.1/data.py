@@ -1,6 +1,8 @@
 import re
 import urllib.request
 from bs4 import BeautifulSoup
+import random
+import time
 
 headers = {
     "Host": "www.lagou.com",
@@ -12,10 +14,6 @@ headers = {
     "X-Requested-With": "XMLHttpRequest"
 }
 
-# 设置代理
-proxy = urllib.request.ProxyHandler({'http': "114.82.109.134:8118"})
-opener = urllib.request.build_opener(proxy, urllib.request.HTTPHandler)
-urllib.request.install_opener(opener)
 
 def getUrl(p):
     if p ==1 :
@@ -37,10 +35,19 @@ def allData():
     all_data = []
     page = 1
     while page <= 30:
+        # 设置代理
+        fp = open("proxy_list.txt", 'r')
+        lines = fp.readlines()
+        ip = lines[0:random.randint(0, len(lines))]
+        proxy = urllib.request.ProxyHandler({'http': "114.82.109.134:8118"})
+        opener = urllib.request.build_opener(proxy, urllib.request.HTTPHandler)
+        urllib.request.install_opener(opener)
+
         url = getUrl(page)
         data = getData(url)
         all_data.append(data)
         page += 1
+        time.sleep(5)
     return all_data
 
 def xzData():
@@ -54,13 +61,13 @@ def xzData():
             XZ.append(x[3])
 
     for x in XZ:
-        if int(x[-3:-1]) <= 20:
+        if int(x[-3:-1]) <= 10:
             a += 1
-        elif 21 <= int(x[-3:-1]) <= 40:
+        elif 11 <= int(x[-3:-1]) <= 20:
             b += 1
-        elif 41 <= int(x[-3:-1]) <= 60:
+        elif 21 <= int(x[-3:-1]) <= 40:
             c += 1
-        elif 61 <= int(x[-3:-1]) <= 80:
+        elif 41 <= int(x[-3:-1]) <= 60:
             d += 1
     A = [a, b, c, d]
     return A
