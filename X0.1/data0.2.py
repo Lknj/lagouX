@@ -18,35 +18,40 @@ headers = {
     "X-Requested-With": "XMLHttpRequest"
 }
 
-# 先爬取后端开发的各职位url
 url = "https://www.lagou.com/"
 req = urllib.request.Request(url, headers = headers)
 resp = urllib.request.urlopen(req)
 cont = resp.read().decode("utf-8")
-some_url = re.findall('<span>后端开发</span>(.*?)<span>移动开发</span>', cont, re.S)
-# print(some_url)
-# 获取所有a标签  href
-soup = BeautifulSoup(str(some_url), "lxml")
+soup = BeautifulSoup(cont, "lxml")
+text = soup.select("div.mainNavs")
+some_url = re.findall('<div class="menu_sub dn">(.*?)</div>', str(text), re.S)
+# print(technology_url[0], technology_url[1])
+technology_url = some_url[0]
+product_url = some_url[1]
+soup_a = BeautifulSoup(str(technology_url), "lxml")
+soup_b = BeautifulSoup(str(product_url), "lxml")
 
-for link in soup.find_all('a'):
-    # print(link.get('href'))
-    page = 1
-    while page <= 30:
-        # 设置代理
-        fp = open("proxy_list.txt", 'r')
-        lines = fp.readlines()
-        ip = lines[random.randint(0, len(lines))]
-        proxy = urllib.request.ProxyHandler({'https': str(ip)})
-        opener = urllib.request.build_opener(proxy, urllib.request.HTTPHandler)
-        urllib.request.install_opener(opener)
+def get_result(soup_x):
+    for link in soup_x.find_all('a'):
+        # print(link.get('href'))
+        page = 1
+        while page <= 30:
+            # 设置代理
+            fp = open("proxy_list.txt", 'r')
+            lines = fp.readlines()
+            ip = lines[random.randint(0, len(lines))]
+            proxy = urllib.request.ProxyHandler({'https': str(ip)})
+            opener = urllib.request.build_opener(proxy, urllib.request.HTTPHandler)
+            urllib.request.install_opener(opener)
 
-        new_url = str(link.get('href')) + str(page) + "/?filterOption=3"
-        # print(new_url)
-        data = getData(new_url)
-        for it in data:
-            insert_db(it[0], it[1], it[2], it[3], Tool().rep(it[4]), Tool().rep(it[5]), datetime.date.today())
-        page += 1
-        time.sleep(5)
-        print("第" + str(page) + "页,写入")
-        print("-" * 90)
+            new_url = str(link.get('href')) + str(page) + "/?filterOption=3"
+
+            data = getData(new_url)
+            for it in data:
+                print(it[0], it[1], it[2], it[3], Tool().rep(it[4]), Tool().rep(it[5]), datetime.date.today())
+            page += 1
+            time.sleep(5)
+            print("-" * 90)
     print("*" * 180)
+technology_result = get_result(soup_a)
+product_result = get_result(soup_b)

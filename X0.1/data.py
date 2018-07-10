@@ -38,8 +38,8 @@ def allData():
         # 设置代理
         fp = open("proxy_list.txt", 'r')
         lines = fp.readlines()
-        ip = lines[0:random.randint(0, len(lines))]
-        proxy = urllib.request.ProxyHandler({'http': "114.82.109.134:8118"})
+        ip = lines[random.randint(0, len(lines))]
+        proxy = urllib.request.ProxyHandler({'http': str(ip)})
         opener = urllib.request.build_opener(proxy, urllib.request.HTTPHandler)
         urllib.request.install_opener(opener)
 

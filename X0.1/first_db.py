@@ -10,7 +10,8 @@ db_name = "lagoux"
 connection = pymysql.connect(host = host,
                              user = username,
                              password = password,
-                             db = db_name)
+                             db = db_name,
+                             charset="utf8")
 def create_db():
     create_table_sql = """CREATE TABLE first_db(
                         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -18,6 +19,7 @@ def create_db():
                         data_positionname VARCHAR(255) NOT NULL,
                         adds CHAR(20) NOT NULL,
                         salary VARCHAR(20) NOT NULL,
+                        experience CHAR(20) NOT NULL,
                         industry VARCHAR(255) NOT NULL,
                         birthday DATE)
                         """
@@ -31,21 +33,20 @@ def create_db():
     finally:
         connection.close()
 
-def insert_db():
+def insert_db(data_company, data_positionname, area, salary, experience, industry, day):
     insert_table_sql = """INSERT INTO first_db(data_company,
                                             data_positionname,
                                             adds,
                                             salary,
+                                            experience,
                                             industry,
-                                            birthday) VALUES (%s, %s, %s, %s, %s, %s)"""
+                                            birthday) VALUES (%s, %s, %s, %s, %s, %s, %s)"""
 
-    try:
-        with connection.cursor() as cursor:
-            cursor.execute(insert_table_sql)
-            connection.commit()
+    with connection.cursor() as cursor:
+        cursor.execute(insert_table_sql, (data_company, data_positionname, area, salary, experience, industry, day))
+        connection.commit()
 
-    finally:
-        connection.close()
+
 
 def query_db():
     query_table_sql = """
