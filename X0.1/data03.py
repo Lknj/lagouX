@@ -48,22 +48,26 @@ def get_result(soup_x):
             ip = lines[random.randint(0, len(lines))]
             proxy = urllib.request.ProxyHandler({'https': str(ip)})
             opener = urllib.request.build_opener(proxy, urllib.request.HTTPHandler)
+            opener.add_handler = [("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36")]
             urllib.request.install_opener(opener)
 
             new_url = str(link.get('href')) + str(page) + "/?filterOption=3"
-
+            print(new_url)
             data = getData(new_url)
             for it in data:
                 print(it[0], it[1], it[2], it[3], Tool().rep(it[4]), Tool().rep(it[5]), datetime.date.today())
             page += 1
-            time.sleep(5)
             print("-" * 90)
-    print("*" * 180)
+            time.sleep(10)
+        print("*" * 180)
+try:
+    technology_result = get_result(technology_url)
+    product_result = get_result(product_url)
+    design_result = get_result(design_url)
+    operation_result = get_result(operation_url)
+    sales_result = get_result(sales_url)
+    function_result = get_result(function_url)
+    financial_result = get_result(financial_url)
 
-technology_result = get_result(technology_url)
-product_result = get_result(product_result)
-design_result = get_result(design_result)
-operation_result = get_result(operation_result)
-sales_result = get_result(sales_result)
-function_result = get_result(function_result)
-financial_result = get_result(financial_result)
+except urllib.error.URLError as e:
+    print(e.reason)

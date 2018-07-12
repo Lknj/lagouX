@@ -1,9 +1,7 @@
-from flask import Flask
-app = Flask(__name__)
+for i in [1, 2, 3, 4, 5]:
+    print(i)
 
-@app.route('/')
-def hello_world():
-    return 'Hello World!'
-
-if __name__ == '__main__':
-    app.run()
+    page = 1
+    while page <= 5:
+        print('yye!?')
+        page += 1
