@@ -3,9 +3,9 @@ import urllib.request
 from bs4 import BeautifulSoup
 import random
 import time
-from data import getData, allData
 from tool import Tool
 from first_db import insert_db, query_db
+from data import getData
 import datetime
 
 headers = {
@@ -37,37 +37,64 @@ sales_url = soup_text(some_url[4])
 function_url = soup_text(some_url[5])
 financial_url = soup_text(some_url[6])
 
+big = []
 def get_result(soup_x):
     for link in soup_x.find_all('a'):
         # print(link.get('href'))
+        small = []
         page = 1
         while page <= 30:
             # 设置代理
-            fp = open("proxy_list.txt", 'r')
-            lines = fp.readlines()
-            ip = lines[random.randint(0, len(lines))]
-            proxy = urllib.request.ProxyHandler({'https': str(ip)})
-            opener = urllib.request.build_opener(proxy, urllib.request.HTTPHandler)
-            opener.add_handler = [("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36")]
-            urllib.request.install_opener(opener)
-
             new_url = str(link.get('href')) + str(page) + "/?filterOption=3"
-            print(new_url)
+            #print(new_url)
             data = getData(new_url)
             for it in data:
-                print(it[0], it[1], it[2], it[3], Tool().rep(it[4]), Tool().rep(it[5]), datetime.date.today())
+                small.append([it[0], it[1], it[2], it[3], Tool().rep(it[4]), Tool().rep(it[5]), datetime.date.today()])
             page += 1
-            print("-" * 90)
+            print("-" * 90 + "完成")
             time.sleep(10)
-        print("*" * 180)
-try:
-    technology_result = get_result(technology_url)
-    product_result = get_result(product_url)
-    design_result = get_result(design_url)
-    operation_result = get_result(operation_url)
-    sales_result = get_result(sales_url)
-    function_result = get_result(function_url)
-    financial_result = get_result(financial_url)
+        big.append(small)
+        print("30页分割线*" * 180)
+        return big
+def industry_result():
+    try:
+        technology_result = get_result(technology_url)
+        product_result = get_result(product_url)
+        design_result = get_result(design_url)
+        operation_result = get_result(operation_url)
+        sales_result = get_result(sales_url)
+        function_result = get_result(function_url)
+        financial_result = get_result(financial_url)
 
-except urllib.error.URLError as e:
-    print(e.reason)
+    except urllib.error.URLError as e:
+        print(e.reason)
+    return technology_result
+def salaryData():
+    XZ = []
+    a = 0
+    b = 0
+    c = 0
+    d = 0
+    for xz in industry_result():
+        for x in xz:
+            XZ.append(x[3])
+
+    for x in XZ:
+        if int(x[-3:-1]) <= 10:
+            a += 1
+        elif 11 <= int(x[-3:-1]) <= 20:
+            b += 1
+        elif 21 <= int(x[-3:-1]) <= 40:
+            c += 1
+        elif 41 <= int(x[-3:-1]) <= 60:
+            d += 1
+    A = [a, b, c, d]
+    return A
+
+def areaData():
+    Area = []
+    for xz in industry_result():
+        for x in xz:
+            Area.append(x[2])
+    return Area
+areaData()
