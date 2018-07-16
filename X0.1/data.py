@@ -28,20 +28,15 @@ def getData(url):
 
     soup = BeautifulSoup(cont, "lxml")
     text = soup.select("div.s_position_list ul")
-    result = re.findall('<li class="con_list_item default_list".*?data-company="(.*?)".*?<h3.*?>(.*?)</h3>.*?<em>(.*?)</em>.*?<span class="money">(.*?)</span>.*?-->(.*?)                              </div>.*?<div class="industry">(.*?)</div>', str(text), re.S)
+    result = re.findall('<li class="con_list_item default_list".*?data-company="(.*?)".*?<h3.*?>(.*?)</h3>.*?<span class="add".*?<em>(.*?)</em>.*?<span class="money">(.*?)</span>.*?-->(.*?)                              </div>.*?<div class="industry">(.*?)</div>', str(text), re.S)
     return result
 
 def allData():
     all_data = []
     page = 1
     while page <= 30:
-        # 设置代理
-        fp = open("proxy_list.txt", 'r')
-        lines = fp.readlines()
-        ip = lines[random.randint(0, len(lines))]
-        proxy = urllib.request.ProxyHandler({'http': str(ip)})
-        opener = urllib.request.build_opener(proxy, urllib.request.HTTPHandler)
-        urllib.request.install_opener(opener)
+        
+
 
         url = getUrl(page)
         data = getData(url)

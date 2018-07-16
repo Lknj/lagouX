@@ -20,13 +20,16 @@
   </head>
   <body>
     <h1>你好，世界！</h1>
+
     {% for x in xz %}
     <h1>{{ x }}</h1>
     {%endfor%}
+
     <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
     <div id="main" style="width: 600px;height:400px;"></div>
-
+    <div id="num" style="width: 600px;height:400px;"></div>
     <script type="text/javascript">
+
     // 基于准备好的dom，初始化echarts实例
     var myChart = echarts.init(document.getElementById('main'));
 
@@ -53,6 +56,60 @@
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option);
     </script>
+    <!--职位地区分布 饼状图-->
+    {% block scripts %}
+    <script type="text/javascript">
+
+    var nameRes = {{ name|safe }};
+    var numRes = {{num}};
+    console.log('aaaaaaaaaaaaaa');
+    console.log(nameRes);
+    var myChart1 = echarts.init(document.getElementById('num'));
+
+    option1 = {
+        title: {
+            text: '地区职位个数',
+            subtext: '数据来源：拉钩',
+            x: 'center'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            orient: 'vertical',
+            left: 'left',
+            data: nameRes
+        },
+        series: [
+            {
+                name: '职位分布（num）',
+                type: 'pie',
+                radius: '55%',
+                center: ['50%', '60%'],
+                data: (function(){
+                    let res = [];
+                    for(let i=0,j=nameRes.length;i<j;i++){
+                        for(let m=i,n=numRes.length;m<n;m++){
+                            res.push({ value: numRes[m], name : nameRes[i] });
+                            break;
+                        }
+                    }
+                    console.log(res);
+                })(),
+                itemStyle: {
+                emphasis: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+            }
+            }
+        ]
+    }
+    myChart1.setOption(option1);
+    </script>
+    {% endblock %}
 
     <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
     <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
