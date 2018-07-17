@@ -12,29 +12,9 @@ connection = pymysql.connect(host = host,
                              password = password,
                              db = db_name,
                              charset="utf8")
-def create_db():
-    create_table_sql = """CREATE TABLE first_db(
-                        id INT AUTO_INCREMENT PRIMARY KEY,
-                        data_company VARCHAR(255) NOT NULL,
-                        data_positionname VARCHAR(255) NOT NULL,
-                        adds CHAR(20) NOT NULL,
-                        salary VARCHAR(20) NOT NULL,
-                        experience CHAR(20) NOT NULL,
-                        industry VARCHAR(255) NOT NULL,
-                        birthday DATE)
-                        """
-    try:
-        with connection.cursor() as cursor:
-            cursor.execute("DROP TABLE IF EXISTS first_db")
-            print("---------------新建表--------------")
-            cursor.execute(create_table_sql)
-            connection.commit()
-
-    finally:
-        connection.close()
 
 def insert_db(data_company, data_positionname, area, salary, experience, industry, day):
-    insert_table_sql = """INSERT INTO first_db(data_company,
+    insert_table_sql = """INSERT INTO technologys(data_company,
                                             data_positionname,
                                             adds,
                                             salary,
@@ -50,7 +30,7 @@ def insert_db(data_company, data_positionname, area, salary, experience, industr
 
 def query_db():
     query_table_sql = """
-                SELECT * FROM first_db
+                SELECT * FROM technologys
                 """
     try:
         with connection.cursor() as cursor:

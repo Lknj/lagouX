@@ -58,6 +58,7 @@ def get_result(soup_x):
             data = getData(new_url)
             #print(data)
             for it in data:
+                insert_db(it[0], it[1], it[2], it[3], Tool().rep(it[4]), Tool().rep(it[5]), datetime.date.today())
                 small.append([it[0], it[1], it[2], it[3], Tool().rep(it[4]), Tool().rep(it[5]), datetime.date.today()])
             page += 1
             print("-" * 90 + "完成")
