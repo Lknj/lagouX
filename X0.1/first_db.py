@@ -30,12 +30,14 @@ def insert_db(data_company, data_positionname, area, salary, experience, industr
 
 def query_db():
     query_table_sql = """
-                SELECT * FROM technologys
+                SELECT * FROM technologys order by id desc limit 450; 
                 """
     try:
         with connection.cursor() as cursor:
             cursor.execute(query_table_sql)
+            result = cursor.fetchall()
             connection.commit()
 
     finally:
         connection.close()
+    return result
