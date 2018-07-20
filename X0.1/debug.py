@@ -1,16 +1,22 @@
 from flask import Flask, render_template, request
-from data04 import areaData, salaryData, position_dict, get_result
+from data04 import allData, position_dict, get_result
 from first_db import query_db
 
 app = Flask(__name__)
-url = position_dict[request.args.get('position_name')]
-salary = salaryData(url)
-name, num = areaData(url)
 
 @app.route('/', methods = ['GET', 'POST'])
 def hello_world():
+    return render_template('index.html')
 
-    return render_template('index.html', salary = salary, name = name, num = num)
+@app.route('/next', methods = ['GET', 'POST'])
+def show_data():
+    p_name = request.args.get('position_name')
+    dictA = position_dict()
+    url = dictA[str(p_name)]
+    salary, education, name, num, experience_name, experience_num = allData(url)
+
+    if request.args.get('query') == "查询":
+        return render_template('query.html', salary = salary, education = education, name = name, num = num, experience_name = experience_name, experience_num = experience_num)
 
 if __name__ == '__main__':
     app.run(debug = True)

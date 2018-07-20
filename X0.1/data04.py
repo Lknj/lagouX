@@ -38,7 +38,7 @@ def position_dict():
             position_dict[name] = position_url[g]
             g += 1
     return position_dict
-print(position_dict())
+
 def getData(url):
     request = urllib.request.Request(url, headers = headers)
     response = urllib.request.urlopen(request)
@@ -47,6 +47,7 @@ def getData(url):
     text = soup.select("div.s_position_list ul")
     result = re.findall('<li class="con_list_item default_list".*?data-company="(.*?)".*?<h3.*?>(.*?)</h3>.*?<span class="add".*?<em>(.*?)</em>.*?<span class="money">(.*?)</span>.*?-->(.*?)                              </div>.*?<div class="industry">(.*?)</div>', str(text), re.S)
     return result
+
 def get_result(url):
     small = []
     page = 1
@@ -55,17 +56,19 @@ def get_result(url):
         data = getData(new_url)
         for it in data:
             small.append([it[0], it[1], it[2], it[3], Tool().rep(it[4]), Tool().rep(it[5]), datetime.date.today()])
-            insert_db(it[0], it[1], it[2], it[3], Tool().rep(it[4]), Tool().rep(it[5]), datetime.date.today())
+
+            #insert_db(it[0], it[1], it[2], it[3], Tool().rep(it[4]), Tool().rep(it[5]), datetime.date.today())
         page += 1
         time.sleep(5)
     return small
-def salaryData(url):
+def allData(url):
+    allResult = get_result(url)
     salary = []
     a = 0
     b = 0
     c = 0
     d = 0
-    for salarys in get_result(url):
+    for salarys in allResult:
         salary.append(salarys[3])
 
     for sal in salary:
@@ -78,24 +81,61 @@ def salaryData(url):
         elif 41 <= int(sal[-3:-1]) <= 60:
             d += 1
     A = [a, b, c, d]
-    return A
+    #return A
 
-def areaData(url):
+
     allArea = []
-    for area in get_result(url):
+    for area in allResult:
         allArea.append(area[2][0:2])
 
     area = list(set(allArea))
     area_result = []
-    for a in area:
+    for ar in area:
         time = 0
-        for A in allArea:
-            if A == a:
+        for all in allArea:
+            if all == ar:
                 time += 1
-        area_result.append([a,time])
+        area_result.append([ar,time])
     name = []
     num = []
     for x in area_result:
         name.append(x[0])
         num.append(x[1])
-    return name,num
+    #return name,num
+
+    allEducation = []
+    for Education in allResult:
+        allEducation.append(Education[4][-2:])
+    e = 0
+    f = 0
+    g = 0
+    h = 0
+    for Education in allEducation:
+        if Education == "大专":
+            e += 1
+        elif Education == "本科":
+            f += 1
+        elif Education == "硕士":
+            g += 1
+        elif Education == "博士":
+            h += 1
+    B = [e, f, g, h]
+
+
+    allExperience = []
+    for experience in allResult:
+        allExperience.append(experience[4][:-4])
+    experiences = list(set(allExperience))
+    experience_result = []
+    for ex in experiences:
+        time = 0
+        for e in allExperience:
+            if e == ex:
+                time += 1
+        experience_result.append([ex,time])
+    experience_name = []
+    experience_num = []
+    for ex in experience_result:
+        experience_name.append(ex[0])
+        experience_num.append(ex[1])
+    return A, B, name, num, experience_name, experience_num
