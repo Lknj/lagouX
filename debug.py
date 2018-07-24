@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from data04 import allData, position_dict, get_result
+from data import allData, position_dict, get_result
 from first_db import query_db
 
 app = Flask(__name__)

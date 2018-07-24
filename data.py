@@ -3,66 +3,139 @@ import urllib.request
 from bs4 import BeautifulSoup
 import random
 import time
+from tool import Tool
+from first_db import insert_db
+import datetime
 
 headers = {
     "Host": "www.lagou.com",
     "Origin": "https://www.lagou.com",
-    "Cookie": "user_trace_token=20171025133046-a75063b9-b945-11e7-9613-5254005c3644; LGUID=20171025133046-a750666a-b945-11e7-9613-5254005c3644; _ga=GA1.2.1301350500.1508909444; LG_LOGIN_USER_ID=bb5cb5245b7abcc3aba04c354d4ad1340752d9e42dd21106; _gid=GA1.2.1565293422.1530365343; JSESSIONID=ABAAABAAAGFABEF72FBF6D0B0E6607B1F64585C17D80087; _gat=1; LGSID=20180701211337-90e95d90-7d30-11e8-9856-5254005c3644; PRE_UTM=; PRE_HOST=www.google.com.hk; PRE_SITE=https%3A%2F%2Fwww.google.com.hk%2F; PRE_LAND=https%3A%2F%2Fwww.lagou.com%2F; index_location_city=%E5%8C%97%E4%BA%AC; Hm_lvt_4233e74dff0ae5bd0a3d81c6ccf756e6=1530148244,1530365343,1530450817,1530450870; TG-TRACK-CODE=index_navigation; Hm_lpvt_4233e74dff0ae5bd0a3d81c6ccf756e6=1530450874; LGRID=20180701211434-b28b5670-7d30-11e8-bab3-525400f775ce; SEARCH_ID=1a0bb8c4813a4f8d89c7a04002f83cef",
+    "Cookie": "user_trace_token=20171025133046-a75063b9-b945-11e7-9613-5254005c3644; LGUID=20171025133046-a750666a-b945-11e7-9613-5254005c3644; _ga=GA1.2.1301350500.1508909444; LG_LOGIN_USER_ID=bb5cb5245b7abcc3aba04c354d4ad1340752d9e42dd21106; _gid=GA1.2.1111296397.1531706780; LGSID=20180716100623-d68b4839-889c-11e8-9dec-5254005c3644; JSESSIONID=ABAAABAAAGGABCBD210DB7C182F795D880F2E5908FF2965; Hm_lvt_4233e74dff0ae5bd0a3d81c6ccf756e6=1531361501,1531578826,1531706780,1531709242; X_HTTP_TOKEN=8b22e1485a68b272410b9924577036d9; index_location_city=%E5%85%A8%E5%9B%BD; SEARCH_ID=a540f44e0dba487ba1b34b0e1250cd46; _gat=1; LGRID=20180716110937-ac4e8e68-88a5-11e8-9dec-5254005c3644; Hm_lpvt_4233e74dff0ae5bd0a3d81c6ccf756e6=1531710576",
     "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.186 Safari/537.36",
     "X-Anit-Forge-Code": "0",
     "X-Anit-Forge-Token": "None",
     "X-Requested-With": "XMLHttpRequest"
 }
 
-
-def getUrl(p):
-    if p ==1 :
-        url = "https://www.lagou.com/zhaopin/Python/"
-    else:
-        url = "https://www.lagou.com/zhaopin/Python/" + str(p) + "/?filterOption=3"
-    return url
-def getData(url):
+def position_dict():
+    url = "https://www.lagou.com/"
     req = urllib.request.Request(url, headers = headers)
     resp = urllib.request.urlopen(req)
     cont = resp.read().decode("utf-8")
-
     soup = BeautifulSoup(cont, "lxml")
+    text = soup.select("div.mainNavs")
+    some_url = re.findall('<div class="category-list">(.*?)</div>', str(text), re.S)
+    position_dict = {}
+    position_url = []
+    g = 0
+    for urla in some_url:
+        all_name = re.findall('<a.*?>(.*?)</a>', str(urla), re.S)
+        soup = BeautifulSoup(str(urla), "lxml")
+
+        for link in soup.find_all('a'):
+            position_url.append(link.get('href'))
+        for name in all_name:
+            position_dict[name] = position_url[g]
+            g += 1
+    return position_dict
+
+def getData(url):
+    request = urllib.request.Request(url, headers = headers)
+    response = urllib.request.urlopen(request)
+    content = response.read().decode('utf-8')
+    soup = BeautifulSoup(content, "lxml")
     text = soup.select("div.s_position_list ul")
     result = re.findall('<li class="con_list_item default_list".*?data-company="(.*?)".*?<h3.*?>(.*?)</h3>.*?<span class="add".*?<em>(.*?)</em>.*?<span class="money">(.*?)</span>.*?-->(.*?)                              </div>.*?<div class="industry">(.*?)</div>', str(text), re.S)
     return result
 
-def allData():
-    all_data = []
+def get_result(url):
+    small = []
     page = 1
     while page <= 30:
-        
+        new_url = url + str(page) + "/?filterOption=3"
+        data = getData(new_url)
+        for it in data:
+            small.append([it[0], it[1], it[2], it[3], Tool().rep(it[4]), Tool().rep(it[5]), datetime.date.today()])
 
-
-        url = getUrl(page)
-        data = getData(url)
-        all_data.append(data)
+            #insert_db(it[0], it[1], it[2], it[3], Tool().rep(it[4]), Tool().rep(it[5]), datetime.date.today())
         page += 1
         time.sleep(5)
-    return all_data
-
-def xzData():
-    XZ = []
+    return small
+def allData(url):
+    allResult = get_result(url)
+    salary = []
     a = 0
     b = 0
     c = 0
     d = 0
-    for xz in allData():
-        for x in xz:
-            XZ.append(x[3])
+    for salarys in allResult:
+        salary.append(salarys[3])
 
-    for x in XZ:
-        if int(x[-3:-1]) <= 10:
+    for sal in salary:
+        if int(sal[-3:-1]) <= 10:
             a += 1
-        elif 11 <= int(x[-3:-1]) <= 20:
+        elif 11 <= int(sal[-3:-1]) <= 20:
             b += 1
-        elif 21 <= int(x[-3:-1]) <= 40:
+        elif 21 <= int(sal[-3:-1]) <= 40:
             c += 1
-        elif 41 <= int(x[-3:-1]) <= 60:
+        elif 41 <= int(sal[-3:-1]) <= 60:
             d += 1
     A = [a, b, c, d]
-    return A
+    #return A
+
+
+    allArea = []
+    for area in allResult:
+        allArea.append(area[2][0:2])
+
+    area = list(set(allArea))
+    area_result = []
+    for ar in area:
+        time = 0
+        for all in allArea:
+            if all == ar:
+                time += 1
+        area_result.append([ar,time])
+    name = []
+    num = []
+    for x in area_result:
+        name.append(x[0])
+        num.append(x[1])
+    #return name,num
+
+    allEducation = []
+    for Education in allResult:
+        allEducation.append(Education[4][-2:])
+    e = 0
+    f = 0
+    g = 0
+    h = 0
+    for Education in allEducation:
+        if Education == "大专":
+            e += 1
+        elif Education == "本科":
+            f += 1
+        elif Education == "硕士":
+            g += 1
+        elif Education == "博士":
+            h += 1
+    B = [e, f, g, h]
+
+
+    allExperience = []
+    for experience in allResult:
+        allExperience.append(experience[4][:-4])
+    experiences = list(set(allExperience))
+    experience_result = []
+    for ex in experiences:
+        time = 0
+        for e in allExperience:
+            if e == ex:
+                time += 1
+        experience_result.append([ex,time])
+    experience_name = []
+    experience_num = []
+    for ex in experience_result:
+        experience_name.append(ex[0])
+        experience_num.append(ex[1])
+    return A, B, name, num, experience_name, experience_num
