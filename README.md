@@ -1,13 +1,31 @@
 # 使用手册
-
-- 功能：以图表展示拉钩网上职位信息
-- 需要：
-  - 安装：
-    - python3，在官网安装即可
-    - mysql，
-    - [echart](http://echarts.baidu.com/download.html), 
-    - python模块（flask, pymysql, bs4）,可以直接pip install xx搞定
-- 注意:要先进入mysql，运行lagoux.sql
+## 安装依赖
+- windows
+<pre>
+pip install flask
+pip install pymysql
+pip install bs4
+</pre>
+- python3,mysql,[echart](http://echarts.baidu.com/download.html)去官网安装即可
+## 数据库
+- 执行sql脚本文件
+  - 使用cmd命令执行
+<pre>
+"C:Program Files\mysql 5.6\bin\mysql" –uroot –ppassword <d:lagoux\lagoux.sql
+</pre>
+  - 进入mysql控制台，使用source命令执行
+ <pre>
+ source d:lagoux\lagoux.sql
+ or
+ \. d:lagoux\lagoux.sql
+ </pre>
+ 
+ ## 以调试模式启动
+ <pre>
+ python debug.py
+ open http://127.0.0.1:5000/ in your browser.
+ </pre>
+ 
 - 截图展示：
   - ![image](https://raw.githubusercontent.com/Lknj/Temp/master/image.png)
   - ![image](https://raw.githubusercontent.com/Lknj/Temp/master/image%20(1).png)
