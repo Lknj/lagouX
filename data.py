@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 import random
 import time
 from tool import Tool
-from first_db import insert_db
+from first_db import insert_db, query_db, verifica
 import datetime
 
 headers = {
@@ -48,21 +48,25 @@ def getData(url):
     result = re.findall('<li class="con_list_item default_list".*?data-company="(.*?)".*?<h3.*?>(.*?)</h3>.*?<span class="add".*?<em>(.*?)</em>.*?<span class="money">(.*?)</span>.*?-->(.*?)                              </div>.*?<div class="industry">(.*?)</div>', str(text), re.S)
     return result
 
-def get_result(url):
+def get_result(name, url):
     small = []
     page = 1
-    while page <= 30:
-        new_url = url + str(page) + "/?filterOption=3"
-        data = getData(new_url)
-        for it in data:
-            small.append([it[0], it[1], it[2], it[3], Tool().rep(it[4]), Tool().rep(it[5]), datetime.date.today()])
+    if verifica(name) != str(datetime.date.today()):
+        while page <= 30:
+            new_url = url + str(page) + "/?filterOption=3"
+            data = getData(new_url)
+            for it in data:
+                small.append([it[0], it[1], it[2], it[3], Tool().rep(it[4]), Tool().rep(it[5]), datetime.date.today()])
 
-            #insert_db(it[0], it[1], it[2], it[3], Tool().rep(it[4]), Tool().rep(it[5]), datetime.date.today())
-        page += 1
-        time.sleep(5)
-    return small
-def allData(url):
-    allResult = get_result(url)
+                insert_db(it[0], it[1], it[2], it[3], Tool().rep(it[4]), Tool().rep(it[5]), datetime.date.today())
+            page += 1
+            time.sleep(5)
+        return small
+    else:
+        return query_db(name)
+
+def allData(name, url):
+    allResult = get_result(name, url)
     salary = []
     a = 0
     b = 0
@@ -106,6 +110,7 @@ def allData(url):
     allEducation = []
     for Education in allResult:
         allEducation.append(Education[4][-2:])
+    v = 0
     e = 0
     f = 0
     g = 0
@@ -113,13 +118,15 @@ def allData(url):
     for Education in allEducation:
         if Education == "大专":
             e += 1
+        elif Education == "不限":
+            v += 1
         elif Education == "本科":
             f += 1
         elif Education == "硕士":
             g += 1
         elif Education == "博士":
             h += 1
-    B = [e, f, g, h]
+    B = [v,  e, f, g, h]
 
 
     allExperience = []

@@ -26,18 +26,24 @@ def insert_db(data_company, data_positionname, area, salary, experience, industr
         cursor.execute(insert_table_sql, (data_company, data_positionname, area, salary, experience, industry, day))
         connection.commit()
 
-
-
-def query_db():
+def query_db(name):
     query_table_sql = """
-                SELECT * FROM technologys order by id desc limit 450; 
-                """
-    try:
-        with connection.cursor() as cursor:
-            cursor.execute(query_table_sql)
-            result = cursor.fetchall()
-            connection.commit()
+                SELECT * FROM technologys where data_positionname like '%s' order by lagoux_id desc limit 450;
+                """ %(name)
+    with connection.cursor() as cursor:
+        cursor.execute(query_table_sql)
+        result = cursor.fetchall()
 
-    finally:
-        connection.close()
     return result
+
+# 检查数据库中是否有当天的数据
+def verifica(name):
+    verifica_table_sql = """
+                        SELECT birthday FROM technologys where data_positionname like '%s' order by lagoux_id desc limit 1;
+                        """ %(name)
+
+    with connection.cursor() as cursor:
+        cursor.execute(verifica_table_sql)
+        result = cursor.fetchone()
+
+    return str(result)

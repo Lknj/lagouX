@@ -13,7 +13,8 @@ def show_data():
     p_name = request.args.get('position_name')
     dictA = position_dict()
     url = dictA[str(p_name)]
-    salary, education, name, num, experience_name, experience_num = allData(url)
+    data_position_name = '%' + p_name + '%'
+    salary, education, name, num, experience_name, experience_num = allData(str(data_position_name), url)
 
     if request.args.get('query') == "查询":
         return render_template('query.html', salary = salary, education = education, name = name, num = num, experience_name = experience_name, experience_num = experience_num)
