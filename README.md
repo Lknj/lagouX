@@ -23,7 +23,7 @@ pip install bs4
  \. d:lagoux\lagoux.sql
  </pre>
  
- ## 以调试模式启动
+## 以调试模式启动
  
  <pre>
  python debug.py
