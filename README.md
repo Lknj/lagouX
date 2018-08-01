@@ -10,12 +10,11 @@ pip install bs4
 ## 数据库
 - 执行sql脚本文件
   - 使用cmd命令执行
-<pre>
-
-"C:Program Files\mysql 5.6\bin\mysql" –uroot –ppassword <d:lagoux\lagoux.sql
-
-</pre>
+  
+<p>"C:Program Files\mysql 5.6\bin\mysql" –uroot –ppassword <d:lagoux\lagoux.sql</p>
+  
 - 进入mysql控制台，使用source命令执行
+
 <pre>
 
  source d:lagoux\lagoux.sql
