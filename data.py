@@ -62,7 +62,7 @@ def get_result(name, url):
             page += 1
             time.sleep(5)
         return small
-    else:
+    elif verifica(name) == str(datetime.date.today()):
         return query_db(name)
 
 def allData(name, url):
