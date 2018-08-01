@@ -15,7 +15,7 @@ pip install bs4
 "C:Program Files\mysql 5.6\bin\mysql" –uroot –ppassword <d:lagoux\lagoux.sql
 </pre>
 
-  - 进入mysql控制台，使用source命令执行
+- 进入mysql控制台，使用source命令执行
   
 <pre>
  source d:lagoux\lagoux.sql
@@ -23,6 +23,7 @@ pip install bs4
  \. d:lagoux\lagoux.sql
 </pre>
  -
+ 
 ## 以调试模式启动
  
 <pre>
