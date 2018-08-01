@@ -10,10 +10,13 @@ pip install bs4
 ## 数据库
 - 执行sql脚本文件
   - 使用cmd命令执行
+  
 <pre>
 "C:Program Files\mysql 5.6\bin\mysql" –uroot –ppassword <d:lagoux\lagoux.sql
 </pre>
+
   - 进入mysql控制台，使用source命令执行
+  
  <pre>
  source d:lagoux\lagoux.sql
  or
@@ -21,6 +24,7 @@ pip install bs4
  </pre>
  
  ## 以调试模式启动
+ 
  <pre>
  python debug.py
  open http://127.0.0.1:5000/ in your browser.
